@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Estimación de Costo de Importación Maritimo</title>
+</head>
+<body class="bg-gray-100 flex justify-center items-start min-h-screen p-8">
+  <div class="bg-white p-6 border border-gray-300 rounded-md shadow-md w-full md:w-1/3">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Estimación de Costo de Importación Maritimo</h2>
+    <div class="mb-4">
+      <label for="exw" class="block text-gray-700 font-semibold mb-2">Valor EXW (en USD):</label>
+      <input type="number" id="exw" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-blue-300" placeholder="Ingresa valor EXW">
+    </div>
+    <div class="mb-4">
+      <label for="toneladas" class="block text-gray-700 font-semibold mb-2">Toneladas:</label>
+      <input type="number" id="toneladas" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-blue-300" placeholder="Ingresa el peso en toneladas">
+    </div>
+    <button onclick="calcularCosto()" class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition">Calcular</button>
+
+    <div id="resultado" class="mt-6 bg-gray-100 p-4 border border-gray-300 rounded-md" style="display: none;">
+      <p class="text-2xl font-bold text-green-600">Costo Final: <span id="totalComision" class="ml-2"></span> USD</p>
+
+    </div>
+  </div>
+
+  <script>
+    function calcularCosto() {
+      const exw = parseFloat(document.getElementById('exw').value);
+      const toneladas = parseFloat(document.getElementById('toneladas').value);
+      
+      if (isNaN(exw) || isNaN(toneladas)) {
+        alert('Por favor, ingrese todos los valores correctamente.');
+        return;
+      }
+    
+      // Valores constantes
+      const costosFijos = 2588.73;
+      const fleteBase = 6550;
+      const limiteToneladas = 24;
+      const comision = 0.30; // 30% de comisión
+  
+      // Cálculo del FOB (FOB es igual a EXW)
+      const fob = exw;
+      console.log(`FOB: ${fob}`);
+      
+      // Cálculo del flete internacional
+      const fleteInternacional = toneladas > limiteToneladas ? fleteBase * 2 : fleteBase;
+      console.log(`Flete Internacional: ${fleteInternacional}`);
+  
+      // Cálculo del CIF
+      const cif = (fob + fleteInternacional) * 1.01;
+      console.log(`CIF: ${cif}`);
+  
+      // Cálculo de derechos de importación
+      const derechosImportacion = cif * 0.35;
+      console.log(`Derechos de Importación: ${derechosImportacion}`);
+      
+      // Cálculo de la base IVA
+      const baseIva = cif + derechosImportacion;
+      console.log(`Base IVA: ${baseIva}`);
+  
+      // Cálculo de la tasa estadística
+      const tasaEstadistica = cif * 0.03;
+      console.log(`Tasa Estadística: ${tasaEstadistica}`);
+  
+      // Cálculo del IVA CF e IVA adicional
+      const ivaCf = baseIva * 0.21;
+      console.log(`IVA CF: ${ivaCf}`);
+      const ivaAdicional = baseIva * 0.20;
+      console.log(`IVA Adicional: ${ivaAdicional}`);
+  
+      // Cálculo de ganancias e ingresos brutos (mismas tasas)
+      const ganancias = baseIva * 0.06;
+      console.log(`Ganancias: ${ganancias}`);
+      const ingresosBrutos = baseIva * 0.025;
+      console.log(`Ingresos Brutos: ${ingresosBrutos}`);
+  
+      // Cálculo del impuesto país
+      const impuestoPais = fob * 0.075;   // Cambiado según especificación
+      console.log(`Impuesto País: ${impuestoPais}`);
+  
+      // Suma de impuestos aduaneros
+      const impuestosAduaneros = derechosImportacion + tasaEstadistica + ivaCf + ivaAdicional + ganancias + ingresosBrutos + impuestoPais;
+      console.log(`Impuestos Aduaneros Totales: ${impuestosAduaneros}`);
+  
+      // Cálculo de la suma total
+      const sumaTotal = baseIva + fleteInternacional + costosFijos + impuestosAduaneros;
+      console.log(`Suma Total: ${sumaTotal}`);
+  
+      // Cálculo del total con comisión
+      const totalComision = sumaTotal + (sumaTotal * comision);
+      console.log(`Total con Comisión: ${totalComision}`);
+  
+      // Mostrar solo el resultado final
+      const resultadoDiv = document.getElementById('resultado');
+      resultadoDiv.querySelector('#totalComision').innerText = totalComision.toFixed(2);
+      resultadoDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+  
